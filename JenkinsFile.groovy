@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYTHON_VERSION = '3.8'  // Set the desired Python version
+        PYTHON_VERSION = '3.11'  // Set the desired Python version
     }
 
     stages {
@@ -35,8 +35,11 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run the tests using unittest and generate JUnit-compatible XML reports
-                    sh 'source venv/bin/activate && python -m unittest discover -s tests -p "*.py" | tee result.log | python -m xmlrunner --output target/surefire-reports'
+                    // Ensure the 'target/surefire-reports' directory exists
+                    sh 'mkdir -p target/surefire-reports'
+                    
+                    // Run tests using unittest and xmlrunner to generate XML results
+                    sh 'source venv/bin/activate && python -m unittest discover -s tests -p "*.py" | python -m xmlrunner --output target/surefire-reports'
                 }
             }
         }
