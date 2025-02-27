@@ -33,16 +33,20 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                script {
-                    // Ensure the 'target/surefire-reports' directory exists
-                    sh 'mkdir -p target/surefire-reports'
-                    
-                    // Run tests using unittest and xmlrunner to generate XML results
-                    sh 'source venv/bin/activate && python -m unittest discover -s tests -p "*.py" | python -m xmlrunner --output target/surefire-reports'
-                }
-            }
+    steps {
+        script {
+            // Ensure the 'target/surefire-reports' directory exists
+            sh 'mkdir -p target/surefire-reports'
+
+            // Run the tests using unittest and generate XML output with xmlrunner
+            sh 'source venv/bin/activate && python -m unittest discover -s tests -p "*.py" | python -m xmlrunner --output target/surefire-reports'
+            
+            // Verify the XML files are generated
+            sh 'ls -l target/surefire-reports/'
         }
+    }
+}
+
 
         stage('Publish Test Results') {
             steps {
