@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYTHON_VERSION = '3.11'  // Set the desired Python version
+        PYTHON_VERSION = '3.8'  // Set the desired Python version
     }
 
     stages {
@@ -35,16 +35,16 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run the tests using pytest, generating JUnit-compatible XML reports
-                    sh 'source venv/bin/activate && pytest --maxfail=1 --disable-warnings -q --junitxml=results.xml'
+                    // Run the tests using unittest and generate JUnit-compatible XML reports
+                    sh 'source venv/bin/activate && python -m unittest discover -s tests -p "*.py" | tee result.log | python -m xmlrunner --output target/surefire-reports'
                 }
             }
         }
 
         stage('Publish Test Results') {
             steps {
-                // Publish the test results in JUnit format
-                junit '**/results.xml'  // Process the results.xml file
+                // Publish the test results in JUnit format (ensure the path matches where your results are saved)
+                junit 'target/surefire-reports/TEST-*.xml'
             }
         }
 
